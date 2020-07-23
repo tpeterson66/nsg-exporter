@@ -1,0 +1,22 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: PowerShell@2
+  displayName: Setup Reports Folder
+  inputs:
+    targetType: 'inline'
+    script: New-Item -Path "./" -Name "nsg-export" -ItemType "directory"
+- task: AzureCLI@2
+  displayName: Export NSG
+  inputs:
+    azureSubscription: 'TomPeterson_MSDN'
+    scriptType: 'pscore'
+    scriptLocation: 'scriptPath'
+    scriptPath: 'nsg-export.ps1'
+    failOnStandardError: false
+- publish: $(System.DefaultWorkingDirectory)/nsg-export.csv
+  artifact: ReportDetails
